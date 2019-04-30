@@ -11,6 +11,7 @@ public class NeuralNetwork
     private Matrix weightsHO; // hidden-output
     private Matrix biasH; // hidden
     private Matrix biasO; // output
+    private float learningRate = 0.1f;
 
     public NeuralNetwork(int iN, int hN, int oN){
         inputNodes = iN;
@@ -27,7 +28,7 @@ public class NeuralNetwork
         biasH.Randomize();
     }
     public List<float> FeedForward(List<float> inputList){
-        // Generatung hidden layer output.
+        // Generating hidden layer output.
         Matrix inputs = Matrix.FromList(inputList);
         Matrix hiddenOutputs = Matrix.Product(weightsIH, inputs);
         hiddenOutputs.Add(biasH);
@@ -43,16 +44,59 @@ public class NeuralNetwork
     }
     public void Train(List<float> inputList, List<float> targetList)
     {
-        List<float> outputList = FeedForward(inputList);
-        Matrix outputs = Matrix.FromList(outputList); // NOT WORKING???
-        Matrix targets = Matrix.FromList(targetList); // NOT WORKING????
+        // Generating hidden layer output.
+        Matrix inputs = Matrix.FromList(inputList);
+        Matrix hiddenOutputs = Matrix.Product(weightsIH, inputs);
+        hiddenOutputs.Add(biasH);
 
+        // Activation function
+        hiddenOutputs.Map(Sigmoid);
 
-        // Calculate error
-        Matrix error = Matrix.Subtract(targets, outputs);
-        outputs.PrintMatrix();
-        targets.PrintMatrix();
-        error.PrintMatrix();
+        // Generating output layer output.
+        Matrix outputs = Matrix.Product(weightsHO, hiddenOutputs);
+        outputs.Add(biasO);
+        outputs.Map(Sigmoid);
+
+        // Convert targets into matrix
+        Matrix targets = Matrix.FromList(targetList);
+
+        // Calculate errors
+        // ERROR = TARGETS - OUTPUTS
+        Matrix outputErrors = Matrix.Subtract(targets, outputs);
+        
+        // Calculate gradient
+        Matrix gradients = Matrix.Map(outputs, DSigmoid);
+        gradients.Multiply(outputErrors);
+        gradients.Multiply(learningRate);
+
+        // Calculate deltas
+        Matrix hiddenTransposed = Matrix.Transpose(hiddenOutputs);
+        Matrix weightHODeltas = Matrix.Product(gradients, hiddenTransposed);
+
+        // Adjust weights (and bias) by deltas!!!
+        weightsHO.Add(weightHODeltas);
+        biasO.Add(gradients); // gradients == deltaBias
+
+        // Calculate hidden layer errors
+        Matrix weightsHOTransposed = Matrix.Transpose(this.weightsHO);
+        Matrix hiddenErrors = Matrix.Product(weightsHOTransposed, outputErrors);
+
+        // Calculate hidden layer gradient
+        Matrix hiddenGradients = Matrix.Map(hiddenOutputs, DSigmoid);
+        hiddenGradients.Multiply(hiddenErrors);
+        hiddenGradients.Multiply(learningRate);
+
+        // Calculate hidden deltas
+        Matrix inputsTransposed = Matrix.Transpose(inputs);
+        Matrix weightIHDeltas = Matrix.Product(hiddenGradients, inputsTransposed);
+
+        // Adjust weights!!!
+        weightsIH.Add(weightIHDeltas);
+        biasH.Add(hiddenGradients);
+        
+        //outputs.PrintMatrix();
+        //targets.PrintMatrix();
+        //outputErrors.PrintMatrix();
 
     }
 
@@ -61,5 +105,11 @@ public class NeuralNetwork
     //----------------------------------
     private float Sigmoid(float x){
         return 1 / (1 + Mathf.Exp(-x));
+    }
+
+    // Derivitive of sigmoid
+    private float DSigmoid(float y){
+        //return Sigmoid(x) * (1 - Sigmoid(x));
+        return y * (1 - y); // Used after already being derivitived
     }
 }

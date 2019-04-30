@@ -36,7 +36,7 @@ public class Matrix
             }
         }
     }
-    public void Multiply(int n){
+    public void Multiply(float n){
         for(int i = 0; i < rows; i++){
             for(int j = 0; j < cols; j++){
                 data[i][j] *= n;
@@ -50,7 +50,7 @@ public class Matrix
             }
         }
     }
-    public void Add(int n){
+    public void Add(float n){
         for(int i = 0; i < rows; i++){
             for(int j = 0; j < cols; j++){
                 data[i][j] += n;
@@ -63,15 +63,6 @@ public class Matrix
                 data[i][j] += m.data[i][j];
             }
         }
-    }
-    public Matrix Transpose(){
-        Matrix result = new Matrix(cols, rows);
-        for(int i = 0; i < rows; i++){
-            for(int j = 0; j < cols; j++){
-                result.data[j][i] = data[i][j];
-            }
-        }
-        return result;
     }
     public void Map(System.Func<float, float> func){
         for(int i = 0; i < rows; i++){
@@ -89,7 +80,6 @@ public class Matrix
         }
         Debug.Log("---------END---------");
     }
-
     public List<float> ToList(){
         List<float> list = new List<float>();
         for(int i = 0; i < rows; i++){
@@ -113,27 +103,47 @@ public class Matrix
         return result;
     }
     public static Matrix Product(Matrix a, Matrix b){
-    if(a.cols != b.rows) {return null;}
-    
-    Matrix result = new Matrix(a.rows, b.cols);
-    for(int i = 0; i < result.rows; i++){
-        for(int j = 0; j < result.cols; j++){
-            float sum = 0;
-            for(int k = 0; k < a.cols; k++){
-                sum += a.data[i][k] * b.data[k][j];
+        if(a.cols != b.rows) {return null;}
+        
+        Matrix result = new Matrix(a.rows, b.cols);
+        for(int i = 0; i < result.rows; i++){
+            for(int j = 0; j < result.cols; j++){
+                float sum = 0;
+                for(int k = 0; k < a.cols; k++){
+                    sum += a.data[i][k] * b.data[k][j];
+                }
+                result.data[i][j] = sum;
             }
-            result.data[i][j] = sum;
         }
+        return result;
     }
-    return result;
+
+    public static Matrix Transpose(Matrix m){
+        Matrix result = new Matrix(m.cols, m.rows); // flipped (transposed)
+        for(int i = 0; i < m.rows; i++){
+            for(int j = 0; j < m.cols; j++){
+                result.data[j][i] = m.data[i][j];
+            }
+        }
+        return result;
+    }
+
+    public static Matrix Map(Matrix m, System.Func<float, float> func){
+        Matrix result = new Matrix(m.rows, m.cols);
+        // Apply a func to every element in matrix
+        for(int i = 0; i < m.rows; i++){
+            for(int j = 0; j < m.cols; j++){
+                float val = m.data[i][j];
+                result.data[i][j] = func(val);
+            }
+        }
+        return result;
     }
 
     public static Matrix FromList(List<float> list){
         Matrix m = new Matrix(list.Count, 1);
         for(int i = 0; i < list.Count; i++){
-            Debug.Log("LIST ITEM " + i + ": " + list[i]);
-            m.data[i].Add(list[i]);
-            Debug.Log(m.data[i][0]);
+            m.data[i][0] = list[i];
         }
         return m;
     }
