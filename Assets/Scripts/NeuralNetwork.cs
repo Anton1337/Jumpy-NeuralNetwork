@@ -93,11 +93,6 @@ public class NeuralNetwork
         // Adjust weights!!!
         weightsIH.Add(weightIHDeltas);
         biasH.Add(hiddenGradients);
-        
-        //outputs.PrintMatrix();
-        //targets.PrintMatrix();
-        //outputErrors.PrintMatrix();
-
     }
 
     //----------------------------------
