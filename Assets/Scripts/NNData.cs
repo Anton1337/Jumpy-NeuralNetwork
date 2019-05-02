@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NNData : MonoBehaviour
+public class NNData
 {
     public List<float> inputs;
     public List<float> targets;
