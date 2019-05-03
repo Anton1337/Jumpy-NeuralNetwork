@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NeuralNetworkTests : MonoBehaviour
-{
+public class NeuralNetworkTests : MonoBehaviour {
+
+    public SpriteRenderer circleRenderer;
+
     void Start()
     {
        /*  {
@@ -79,6 +81,7 @@ public class NeuralNetworkTests : MonoBehaviour
             };
             List<List<float>> testingData = new List<List<float>>()
             {
+
                 new List<float>(){229f, 26f, 26f},
                 new List<float>(){188f, 39f, 39f}, // RED
                 new List<float>(){25f, 226f, 75f},
@@ -90,8 +93,13 @@ public class NeuralNetworkTests : MonoBehaviour
                 new List<float>(){156f, 0f, 255f},
                 new List<float>(){107f, 28f, 146f}, // PURPLE
 
+                new List<float>(){circleRenderer.color.r, circleRenderer.color.g, circleRenderer.color.b}          
+
             };
-            NeuralNetwork nn = new NeuralNetwork(3, 32, 5);
+            Debug.Log(circleRenderer.color.r*255);
+            Debug.Log(circleRenderer.color.g*255);
+            Debug.Log(circleRenderer.color.b*255);
+            NeuralNetwork nn = new NeuralNetwork(3, 16, 5);
 
             for (int i = 0; i < 10000; i++)
             {
@@ -130,8 +138,6 @@ public class NeuralNetworkTests : MonoBehaviour
                         break;
                 }
             }
-
-
         }
     }
 }
