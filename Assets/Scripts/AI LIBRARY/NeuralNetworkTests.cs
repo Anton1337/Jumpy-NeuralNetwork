@@ -93,7 +93,7 @@ public class NeuralNetworkTests : MonoBehaviour {
                 new List<float>(){156f, 0f, 255f},
                 new List<float>(){107f, 28f, 146f}, // PURPLE
 
-                new List<float>(){circleRenderer.color.r, circleRenderer.color.g, circleRenderer.color.b}          
+                new List<float>(){circleRenderer.color.r * 255, circleRenderer.color.g * 255, circleRenderer.color.b * 255}          
 
             };
             Debug.Log(circleRenderer.color.r*255);
